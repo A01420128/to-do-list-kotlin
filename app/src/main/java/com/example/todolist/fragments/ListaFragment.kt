@@ -13,6 +13,7 @@ import com.example.todolist.R
 import com.example.todolist.adapter.TasksAdapter
 import com.example.todolist.data.Task
 import com.example.todolist.data.TasksDataProvider
+import com.example.todolist.databinding.FragmentListaBinding
 
 
 /**
@@ -21,6 +22,8 @@ import com.example.todolist.data.TasksDataProvider
  * create an instance of this fragment.
  */
 class ListaFragment : Fragment() {
+
+    private lateinit var binding: FragmentListaBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,7 +34,8 @@ class ListaFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_lista, container, false)
+        binding = FragmentListaBinding.inflate(layoutInflater)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -40,11 +44,16 @@ class ListaFragment : Fragment() {
         val message = "Task created: name: ${task!!.name}, description: ${task.description}, priority: ${task.priority}, timestamp: ${task.timestamp}"
         Toast.makeText(view.context, message,Toast.LENGTH_LONG).show()
 
-        val recyclerView: RecyclerView = view.findViewById(R.id.recyclerView)
+        val recyclerView: RecyclerView = binding.recyclerView
 
-        val tasksAdapter = TasksAdapter(TasksDataProvider.getData()) {
-            // TODO: Do something when item clicked
-        }
+        val tasksAdapter = TasksAdapter(TasksDataProvider.getData())
+
+        tasksAdapter.setOnItemClickListener(object: TasksAdapter.ClickListener {
+            override fun onItemClick(view: View, position: Int) {
+                Toast.makeText(context, tasksAdapter.getData(position).toString(), Toast.LENGTH_LONG).show()
+            }
+        })
+
         recyclerView.adapter = tasksAdapter
 
     }

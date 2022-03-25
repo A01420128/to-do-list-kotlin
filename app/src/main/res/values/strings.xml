@@ -9,4 +9,5 @@
     <string name="input_task_desc">Descripcion</string>
     <string name="input_task_priority">Prioridad</string>
     <string name="btn_capture">Agregar</string>
+    <string name="splash_title">ToDoList</string>
 </resources>

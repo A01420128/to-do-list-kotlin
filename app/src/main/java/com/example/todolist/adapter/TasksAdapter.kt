@@ -8,11 +8,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.todolist.R
 import com.example.todolist.data.Task
 
-class TasksAdapter (private val list: List<Task>, private val onItemClicked: (position: Int) -> Unit) :
+class TasksAdapter (private val list: List<Task>) :
     RecyclerView.Adapter<TasksAdapter.TasksViewHolder>() {
 
+    private var clickListener: ClickListener? = null
 
-    class TasksViewHolder(view: View, private val onItemClicked: (position: Int) -> Unit): RecyclerView.ViewHolder(view), View.OnClickListener {
+    fun setOnItemClickListener(clickListener: ClickListener) {
+        this.clickListener = clickListener
+    }
+
+    interface ClickListener {
+        fun onItemClick(view: View, position: Int)
+    }
+
+
+    inner class TasksViewHolder(view: View): RecyclerView.ViewHolder(view), View.OnClickListener {
         val name: TextView = view.findViewById(R.id.rowTaskName)
         val desc: TextView = view.findViewById(R.id.rowTaskDesc)
         val prio: TextView = view.findViewById(R.id.rowTaskPri)
@@ -28,16 +38,17 @@ class TasksAdapter (private val list: List<Task>, private val onItemClicked: (po
             view.setOnClickListener(this)
         }
 
-        override fun onClick(p0: View?) {
-            val position = bindingAdapterPosition
-            onItemClicked(position)
+        override fun onClick(view: View?) {
+            if (view != null) {
+                clickListener?.onItemClick(view, bindingAdapterPosition)
+            }
         }
     }
 
     // Builds but doesnt give data to grafic elements.
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TasksViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.row, parent, false)
-        return TasksViewHolder(view, onItemClicked)
+        return TasksViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TasksViewHolder, position: Int) {
@@ -46,4 +57,8 @@ class TasksAdapter (private val list: List<Task>, private val onItemClicked: (po
     }
 
     override fun getItemCount() = list.size
+
+    fun getData(position: Int): Task {
+        return list[position]
+    }
 }
